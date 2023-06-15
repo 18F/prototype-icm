@@ -1,0 +1,4 @@
+parallel: true          # default: false
+
+ignore:                 # default: []
+  - 'vendor/**/*'
