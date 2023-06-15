@@ -13,3 +13,12 @@ This is a de-risking prototype supporting the implementation of a new case manag
 
 We are specifically not using 18F's Rails template because there are no plans to deploy this code. This prototype is entirely for the purposes of gathering information, informing decisions, de-risking, and resolving ambiguity.
 
+
+
+### Importing data
+
+Data is private to members of 18F and CRT, and is not shared in this repository.
+
+To start importing, open your database console. I recommend using the Postgres app for managing your database. Double-click the database, and it opens up a console.
+
+Run `bundle exec rake import` to generate a command that you'll need to paste into the console.

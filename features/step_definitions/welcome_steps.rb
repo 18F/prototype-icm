@@ -4,10 +4,10 @@ require "test/unit/assertions"
 extend Test::Unit::Assertions
 # standard:enable Style/MixinUsage
 
-Given('I am on the home page') do
+Given("I am on the home page") do
   # NO OP
 end
 
-Then('I should see {string}') do |expected|
+Then("I should see {string}") do |expected|
   assert_equal expected, "Welcome to my site."
 end
