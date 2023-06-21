@@ -27,5 +27,8 @@
 # Ignore data files
 db/data
 
+# Ignore the schema now that the initial schema has been committed
+db/schema.rb
+
 # Ignore Mac system files
 .DS_Store
