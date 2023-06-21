@@ -20,5 +20,9 @@ class ReportTest < ActiveSupport::TestCase
   test "gets values from a column" do
     assert_equal [2.01], @report.get(col: 2)
   end
+
+  test "stores and retrieves reports by name" do
+    assert Report.find("Caseload report 1").present?
+  end
 end
 

@@ -20,7 +20,6 @@ group :development, :test do
   gem "debug", platforms: %i[mri mingw x64_mingw]
   gem "standard" # Linting
 
-  gem "dry-container" # Building up test state
   gem "cucumber-rails", require: false # Feature tests
   gem "test-unit" # Assertions for feature tests
 end

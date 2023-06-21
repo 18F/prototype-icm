@@ -1,8 +1,12 @@
 class Report
 
+  attr_reader :name, :query
+
   def initialize(name: , query: )
     @name = name
     @query = query
+    @context = {}
+    self.class.register(self) # Add this report to the registry
   end
 
   # Give it a column or row number, 1-indexed,
@@ -24,8 +28,46 @@ class Report
     end
   end
 
+  def with(variables)
+    unless variables.is_a? Hash
+      raise ArgumentError, "I expected a hash to be given to #with, but got #{variables.inspect} (#{variables.class})"
+    end
+    @context = variables
+    return self
+  end
+
   def results
-    @results ||= ActiveRecord::Base.connection.exec_query(@query).to_a
+    ActiveRecord::Base.connection.exec_query(evaluate_query).to_a
+  end
+
+  private def evaluate_query
+    ERB.new(query).result_with_hash(@context)
+  end
+
+  def self.all
+    registry.values
+  end
+
+  def self.find(name)
+    registry.fetch(name)
+  end
+
+  def self.initialize_all
+    Dir[File.expand_path("app/queries/*")].each do |path|
+      base, _, ext = File.basename(path).partition(".")
+      query = File.read(path)
+      Report.new(name: base, query: query)
+    end
+  end
+
+  def self.register(instance)
+    registry.merge!(instance.name => instance)
+  end
+
+  def self.registry
+    @@registry ||= Hash.new
   end
 
 end
+
+Report.initialize_all
