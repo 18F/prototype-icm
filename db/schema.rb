@@ -1,5 +1,8 @@
-ActiveRecord::Schema.define(:version => nil) do
-  create_table "CRDMAIN", force: true do |t|
+ActiveRecord::Schema[7.0].define(version: 0) do
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "CRDMAIN", force: :cascade do |t|
     t.integer "BENEFITTED_POPULATION", null: true
     t.string "CASE_MATTER", limit: 1
     t.string "CASE_MATTER_SOURCE", limit: 20, null: true
@@ -102,4 +105,5 @@ ActiveRecord::Schema.define(:version => nil) do
     t.string "SYNOPSIS", limit: 4000, null: true
     t.string "ZIP", limit: 20, null: true
   end
+
 end
