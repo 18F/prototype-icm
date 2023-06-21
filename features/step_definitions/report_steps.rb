@@ -57,12 +57,7 @@ Then('expect row {} to have numbers {number_array}') do |row, expected|
   assert_equal expected, actual
 end
 
-Then('expect the value to be {int}') do |expected|
-  actual = retrieve(:results).get(col: 1, row: 1)
-  assert_equal expected, actual
-end
-
-Then('expect a value of {int}') do |expected|
+Then('expect {article} {value_word} {lead_in} {int}') do |_, _, _, expected|
   actual = retrieve(:results).get(col: 1, row: 1)
   assert_equal expected, actual
 end

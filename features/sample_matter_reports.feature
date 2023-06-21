@@ -2,21 +2,21 @@ Feature: Sample matter reports
   Scenario: Matter count report
     Given report "matter count"
     When I run the report
-    Then expect the value to be 3744
+    Then expect the value will be 3744
 
   Scenario: Matter count report by date
     Given report "matter count by date"
     And start date is Nov 1, 2018
     And end date is 06/01/2019
     When I run the report
-    Then expect a value of 8
+    Then expect the count to be 8
 
   Scenario: Matter count report by dates
     Given report "matter count by date"
     And start date is <start>
     And end date is <end>
     When I run the report
-    Then expect a value of <expected>
+    Then expect a sum of <expected>
 
     Examples:
       | start      | end              | expected |
