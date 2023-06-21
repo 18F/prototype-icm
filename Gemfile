@@ -8,6 +8,7 @@ gem "rails", "~> 7.0.5"
 
 gem "sprockets-rails" # Asset pipeline
 gem "pg", "~> 1.1" # Postgres database
+gem "mustache" # Templates
 
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", "~> 5.0"

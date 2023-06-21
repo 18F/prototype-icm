@@ -41,7 +41,7 @@ class Report
   end
 
   private def evaluate_query
-    ERB.new(query).result_with_hash(@context)
+    Mustache.render(query, @context)
   end
 
   def self.all

@@ -127,8 +127,6 @@ GEM
       irb (>= 1.5.0)
       reline (>= 0.3.1)
     diff-lcs (1.5.0)
-    dry-container (0.11.0)
-      concurrent-ruby (~> 1.0)
     erubi (1.12.0)
     ffi (1.15.5)
     globalid (1.1.0)
@@ -156,9 +154,10 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2023.0218.1)
     mini_mime (1.1.2)
-    minitest (5.18.0)
+    minitest (5.18.1)
     msgpack (1.7.1)
     multi_test (1.1.0)
+    mustache (1.1.1)
     net-imap (0.3.6)
       date
       net-protocol
@@ -178,9 +177,9 @@ GEM
     pg (1.5.3)
     power_assert (2.0.3)
     public_suffix (5.0.1)
-    puma (5.6.5)
+    puma (5.6.6)
       nio4r (~> 2.0)
-    racc (1.7.0)
+    racc (1.7.1)
     rack (2.2.7)
     rack-test (2.1.0)
       rack (>= 1.3)
@@ -281,7 +280,7 @@ DEPENDENCIES
   cucumber-rails
   database_cleaner
   debug
-  dry-container
+  mustache
   pg (~> 1.1)
   puma (~> 5.0)
   rails (~> 7.0.5)
