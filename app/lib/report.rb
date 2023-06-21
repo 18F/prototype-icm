@@ -49,7 +49,14 @@ class Report
   end
 
   def self.find(name)
-    registry.fetch(name)
+    key = name.parameterize
+    registry.fetch(key) {
+      raise ActiveRecord::RecordNotFound, <<~ERR
+        I couldn't find a report named \"#{name}\".
+        Create it by adding `app/queries/#{key}.sql`.
+
+      ERR
+    }
   end
 
   def self.initialize_all
@@ -61,7 +68,7 @@ class Report
   end
 
   def self.register(instance)
-    registry.merge!(instance.name => instance)
+    registry.merge!(instance.name.parameterize => instance)
   end
 
   def self.registry

@@ -35,7 +35,7 @@ Data is private to members of 18F and CRT, and is not shared in this repository.
 To import data:
 
 1. Run `rake import`.
-1. In a different window, open up a database console. The easist way to do this is to run `rails db`.
+1. In a different window, open up a database console. The easist way to do this is to run `rails db`. If you're importing data to the test database, prepend the command with `RAILS_ENV=test`.
 1. Copy the commands generated from `rake import`, table by table, into the database console. This will copy in the data, populating the database.
 
 

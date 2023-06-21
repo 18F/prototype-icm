@@ -9,6 +9,14 @@ Given('{} is {int}') do |attribute, value|
   store attribute.to_sym, value
 end
 
+Given('start date is {}') do |date|
+  store :start_date, Date.parse(date).iso8601
+end
+
+Given('end date is {}') do |date|
+  store :end_date, Date.parse(date).iso8601
+end
+
 Given('date is Q{int} FY{int}') do |quarter, fy|
   raise ArgumentError unless [1,2,3,4].include?(quarter)
   year = fy.digits.length == 2 ? 2000 + year : year
@@ -25,9 +33,13 @@ Given('date is Q{int} FY{int}') do |quarter, fy|
   store :end_date, dates.last
 end
 
-Then('expect column {int} and row {int} to be {int}') do |col, row, expected|
+When('I run the report') do
   report = Report.find(retrieve :report)
-  actual = report.with(retrieve_all).get(col: col, row: row)
+  store :results, report.with(retrieve_all)
+end
+
+Then('expect column {int} and row {int} to be {int}') do |col, row, expected|
+  actual = retrieve(:results).get(col: col, row: row)
   assert_equal expected, actual
 end
 
@@ -42,6 +54,16 @@ Then('expect row {} to have numbers {number_array}') do |row, expected|
   pending
   assert_number(row)
   actual = raise NotImplementedError
+  assert_equal expected, actual
+end
+
+Then('expect the value to be {int}') do |expected|
+  actual = retrieve(:results).get(col: 1, row: 1)
+  assert_equal expected, actual
+end
+
+Then('expect a value of {int}') do |expected|
+  actual = retrieve(:results).get(col: 1, row: 1)
   assert_equal expected, actual
 end
 
