@@ -5,6 +5,10 @@ Given('report {string}') do |report_name|
   store :report, report_name
 end
 
+Given('{article} {string} report') do |_, report_name|
+  store :report, report_name
+end
+
 Given('{} is {int}') do |attribute, value|
   store attribute.to_sym, value
 end

@@ -16,7 +16,7 @@ Feature: Sample matter reports
     And start date is <start>
     And end date is <end>
     When I run the report
-    Then expect a sum of <expected>
+    Then expect a count of <expected>
 
     Examples:
       | start      | end              | expected |

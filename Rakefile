@@ -6,7 +6,7 @@ require 'csv'
 require_relative "config/application"
 Rails.application.load_tasks
 
-desc ""
+desc "Run acceptance tests without typing `cucumber`"
 task :acceptance do
   Rake::Task["cucumber"].invoke
 end
