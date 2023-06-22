@@ -9,21 +9,40 @@ class Report
     self.class.register(self) # Add this report to the registry
   end
 
+  def get(col: nil, row: nil)
+    col_num = if col.is_a?(String)
+      results.first.keys.index(col) + 1
+    else
+      col
+    end
+
+    row_num = if row.is_a?(String)
+      row_was_text = true
+      results.map { |row| row.values.first }.index(row) + 1
+    else
+      row_was_text = false
+      row
+    end
+
+    get_by_number(col: col_num, row: row_num, row_was_text: row_was_text)
+  end
+
   # Give it a column or row number, 1-indexed,
   # e.g. `row: 1` will get the first row instead of the second
-  def get(col: nil, row: nil)
+  private def get_by_number(col: nil, row: nil, row_was_text: false)
     col_index = col.present? ? col - 1 : nil
     row_index = row.present? ? row - 1 : nil
     if col.present? && row.nil?
       results.map { |row| row.values[col_index] }
     elsif col.nil? && row.present?
-      results[row_index].values
+      start = row_was_text ? 1 : 0
+      results[row_index].values[start..]
     elsif col.present? && row.present?
       results[row_index].values[col_index]
     else
       raise <<~ERR
         I didn't expect these parameters:
-          col: #{column.inspect}, row: #{row.inspect}
+          col: #{col.inspect}, row: #{row.inspect}
       ERR
     end
   end
@@ -37,6 +56,7 @@ class Report
   end
 
   def results
+    return @stubbed_results if @stubbed_results.present?
     ActiveRecord::Base.connection.exec_query(evaluate_query).to_a
   end
 
@@ -73,6 +93,14 @@ class Report
 
   def self.registry
     @@registry ||= Hash.new
+  end
+
+  def stub_results(return_value)
+    @stubbed_results = return_value
+  end
+
+  def clear_stubbed_results
+    @stubbed_results = nil
   end
 
 end
