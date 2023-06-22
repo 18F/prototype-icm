@@ -6,6 +6,11 @@ require 'csv'
 require_relative "config/application"
 Rails.application.load_tasks
 
+desc ""
+task :acceptance do
+  Rake::Task["cucumber"].invoke
+end
+
 desc "Generate the command to import data"
 task :import do
   folder = "db/data"
