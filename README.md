@@ -17,8 +17,12 @@ We are specifically not using 18F's Rails template because there are no plans to
 
 1. Clone this repository
 1. Run `bundle install` to install dependencies
+1. Make sure `db/schema.rb` hasn't been overridden (this is a known bug from running `db:migrate`)
 1. Run `rails db:schema:load` to set up the initial database
-1. If there are migrations because we've started to iterate on the data model, run `rails db:migrate`. Because we're iterating on the data model itself, we do not commit updated versions of the schema (post-migration) to the repository.
+1. If there are migrations because we've started to iterate on the data model, run `rails db:migrate`. Because we're iterating on the data model itself, we do not commit updated versions of the schema (post-migration) to the repository. Remember to check for schema file override after running migrations.
+1. See import data instructions below before running tests
+
+### Running Tests
 1. Run `rails test` to run unit tests
 1. Run `rake cucumber` to run acceptance tests for data/reports
 
@@ -34,6 +38,7 @@ Data is private to members of 18F and CRT, and is not shared in this repository.
 
 To import data:
 
+1. Drop a copy of a data table csv into `db/data` (ask a team member for the current sample file)
 1. Run `rake import`.
 1. In a different window, open up a database console. The easist way to do this is to run `rails db`. If you're importing data to the test database, prepend the command with `RAILS_ENV=test`.
 1. Copy the commands generated from `rake import`, table by table, into the database console. This will copy in the data, populating the database.
