@@ -22,9 +22,22 @@ We are specifically not using 18F's Rails template because there are no plans to
 1. If there are migrations because we've started to iterate on the data model, run `rails db:migrate`. Because we're iterating on the data model itself, we do not commit updated versions of the schema (post-migration) to the repository. Remember to check for schema file override after running migrations.
 1. See import data instructions below before running tests
 
-### Running Tests
-1. Run `rails test` to run unit tests
+### Import data
+
+Data is private to members of 18F and CRT, and is not shared in this repository.
+
+To import data:
+
+1. Ask a team member for the current data files
+1. Make a folder `db/data`, and copy the data there
+1. Run `RAILS_ENV=test rake import`
+
+### Running acceptance tests
+1. Make sure you've imported the data
 1. Run `rake cucumber` to run acceptance tests for data/reports
+
+### Run unit tests
+1. Run `rails test` to run unit tests. These tests don't depend on the data.
 
 ### Contributing
 
@@ -32,16 +45,7 @@ We are specifically not using 18F's Rails template because there are no plans to
 1. Commit to the branch. Make sure your code is reasonably well-tested.
 1. When you're ready, push to the branch and create a pull request
 
-### Import data
 
-Data is private to members of 18F and CRT, and is not shared in this repository.
-
-To import data:
-
-1. Drop a copy of a data table csv into `db/data` (ask a team member for the current sample file)
-1. Run `rake import`.
-1. In a different window, open up a database console. The easist way to do this is to run `rails db`. If you're importing data to the test database, prepend the command with `RAILS_ENV=test`.
-1. Copy the commands generated from `rake import`, table by table, into the database console. This will copy in the data, populating the database.
 
 
 ### Add reports
