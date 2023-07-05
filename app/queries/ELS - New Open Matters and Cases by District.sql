@@ -19,7 +19,7 @@ SELECT DISTINCT
                                      SF_STATUTE(CRDMAIN.MATTER_NO,'N',6) STATUTE_CODE,
                                      ICMR.Multi_Row('select PM.last_name'|| '||'' - ''||s2.position' || ' from PM, CRTSTAFF S2 where S2.matter_no = '||to_char(crdmain.matter_no)|| ' and S2.parent_type(+) = ''ICM'' '|| ' and S2.end_date is null ' || ' and PM.empl_id(+) = S2.staff_id ') Staff_data
 FROM CRDMAIN
-WHERE CRDMAIN.DT_INITIATED <= TO_DATE('{{ date }}','MM/DD/YYYY')
+WHERE CRDMAIN.DT_INITIATED <= date '{{ date }}'
   AND CRDMAIN.CASE_MATTER <> 'D'
   AND CRDMAIN.SECTION = 'ELS'
   AND CRDMAIN.CLOSED_DT IS NULL

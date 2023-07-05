@@ -8,6 +8,11 @@ gem "rails", "~> 7.0.5"
 
 gem "sprockets-rails" # Asset pipeline
 gem "pg", "~> 1.1" # Postgres database
+
+# Oracle database and client
+gem "activerecord-oracle_enhanced-adapter", "~> 7.0.0"
+gem "ruby-oci8"
+
 gem "mustache" # Templates
 
 # Use the Puma web server [https://github.com/puma/puma]

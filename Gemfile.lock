@@ -54,6 +54,10 @@ GEM
     activerecord (7.0.5)
       activemodel (= 7.0.5)
       activesupport (= 7.0.5)
+    activerecord-oracle_enhanced-adapter (7.0.2)
+      activerecord (~> 7.0.0)
+      ruby-oci8
+      ruby-plsql (>= 0.6.0)
     activestorage (7.0.5)
       actionpack (= 7.0.5)
       activejob (= 7.0.5)
@@ -231,6 +235,8 @@ GEM
     rubocop-performance (1.18.0)
       rubocop (>= 1.7.0, < 2.0)
       rubocop-ast (>= 0.4.0)
+    ruby-oci8 (2.2.12)
+    ruby-plsql (0.8.0)
     ruby-progressbar (1.13.0)
     sprockets (4.2.0)
       concurrent-ruby (~> 1.0)
@@ -276,6 +282,7 @@ PLATFORMS
   x86_64-darwin-20
 
 DEPENDENCIES
+  activerecord-oracle_enhanced-adapter (~> 7.0.0)
   bootsnap
   cucumber-rails
   database_cleaner
@@ -284,6 +291,7 @@ DEPENDENCIES
   pg (~> 1.1)
   puma (~> 5.0)
   rails (~> 7.0.5)
+  ruby-oci8
   sprockets-rails
   standard
   test-unit

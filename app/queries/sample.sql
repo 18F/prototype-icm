@@ -1,1 +1,1 @@
-SELECT 101 as count;
+SELECT 101 as count

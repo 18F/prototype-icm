@@ -1,7 +1,6 @@
-require 'forwardable'
+require "forwardable"
 
 class Report
-
   attr_reader :name, :query
 
   class << self
@@ -9,7 +8,7 @@ class Report
     def_delegators :all, :count, :first, :last
   end
 
-  def initialize(name: , query: )
+  def initialize(name:, query:)
     @name = name
     @query = query
     @context = {}
@@ -17,6 +16,8 @@ class Report
   end
 
   def get(col: nil, row: nil)
+    return results if col.nil? && row.nil?
+
     col_num = if col.is_a?(String)
       results.first.keys.index(col) + 1
     else
@@ -59,12 +60,15 @@ class Report
       raise ArgumentError, "I expected a hash to be given to #with, but got #{variables.inspect} (#{variables.class})"
     end
     @context = variables
-    return self
+    self
   end
 
   def results
     return @stubbed_results if @stubbed_results.present?
     ActiveRecord::Base.connection.exec_query(evaluate_query).to_a
+  rescue ActiveRecord::StatementInvalid => e
+    puts "I tried to query with:\n\t#{evaluate_query}"
+    raise e
   end
 
   private def evaluate_query
@@ -72,7 +76,7 @@ class Report
   end
 
   def inspect
-    "#<Report name: \"#{self.name}\">"
+    "#<Report name: \"#{name}\">"
   end
 
   def self.all
@@ -83,7 +87,7 @@ class Report
     key = name.parameterize
     registry.fetch(key) {
       raise ActiveRecord::RecordNotFound, <<~ERR
-        I couldn't find a report named \"#{name}\".
+        I couldn't find a report named "#{name}".
         Create it by adding `app/queries/#{key}.sql`.
 
       ERR
@@ -103,7 +107,7 @@ class Report
   end
 
   def self.registry
-    @@registry ||= Hash.new
+    @@registry ||= {}
   end
 
   def stub_results(return_value)
@@ -113,7 +117,6 @@ class Report
   def clear_stubbed_results
     @stubbed_results = nil
   end
-
 end
 
 Report.initialize_all
