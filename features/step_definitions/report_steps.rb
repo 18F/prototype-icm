@@ -9,6 +9,10 @@ Given('{article} {string} report') do |_, report_name|
   store :report, report_name
 end
 
+Given('{article} report {string}') do |_, report_name|
+  store :report, report_name
+end
+
 Given('{} is {int}') do |attribute, value|
   store attribute.to_sym, value
 end
@@ -19,6 +23,10 @@ end
 
 Given('end date is {}') do |date|
   store :end_date, Date.parse(date).iso8601
+end
+
+Given('{article} date is {}') do |_, date|
+  store :date, Date.parse(date).iso8601
 end
 
 Given('date is Q{int} FY{int}') do |quarter, fy|

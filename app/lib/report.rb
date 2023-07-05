@@ -1,12 +1,19 @@
+require 'forwardable'
+
 class Report
 
   attr_reader :name, :query
+
+  class << self
+    extend Forwardable
+    def_delegators :all, :count, :first, :last
+  end
 
   def initialize(name: , query: )
     @name = name
     @query = query
     @context = {}
-    self.class.register(self) # Add this report to the registry
+    self.class.register(self) # Adds this report to the registry
   end
 
   def get(col: nil, row: nil)
@@ -62,6 +69,10 @@ class Report
 
   private def evaluate_query
     Mustache.render(query, @context)
+  end
+
+  def inspect
+    "#<Report name: \"#{self.name}\">"
   end
 
   def self.all
