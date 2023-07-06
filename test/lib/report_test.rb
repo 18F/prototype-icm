@@ -4,7 +4,7 @@ class ReportTest < ActiveSupport::TestCase
   def setup
     @report = Report.new(
       name: "Caseload report 1",
-      query: "SELECT 101 AS count, 2.01 AS avg_data"
+      query: "SELECT 101 count, 2.01 avg_data FROM DUAL"
     )
   end
 

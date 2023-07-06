@@ -7,7 +7,6 @@ ruby "3.1.0"
 gem "rails", "~> 7.0.5"
 
 gem "sprockets-rails" # Asset pipeline
-gem "pg", "~> 1.1" # Postgres database
 
 # Oracle database and client
 gem "activerecord-oracle_enhanced-adapter", "~> 7.0.0"

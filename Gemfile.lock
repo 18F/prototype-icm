@@ -178,7 +178,6 @@ GEM
     parser (3.2.2.3)
       ast (~> 2.4.1)
       racc
-    pg (1.5.3)
     power_assert (2.0.3)
     public_suffix (5.0.1)
     puma (5.6.6)
@@ -288,7 +287,6 @@ DEPENDENCIES
   database_cleaner
   debug
   mustache
-  pg (~> 1.1)
   puma (~> 5.0)
   rails (~> 7.0.5)
   ruby-oci8
