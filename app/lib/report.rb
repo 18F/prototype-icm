@@ -17,22 +17,30 @@ class Report
 
   def get(col: nil, row: nil)
     return results if col.nil? && row.nil?
+    row_num, row_was_text = get_row_number(row)
 
-    col_num = if col.is_a?(String)
+    get_by_number(
+      col: get_column_number(col),
+      row: row_num,
+      row_was_text: row_was_text
+    )
+  end
+
+  private def get_column_number(col)
+    if col.is_a?(String)
       results.first.keys.index(col) + 1
     else
       col
     end
+  end
 
-    row_num = if row.is_a?(String)
-      row_was_text = true
-      results.map { |row| row.values.first }.index(row) + 1
+  private def get_row_number(row)
+    if row.is_a?(String)
+      result = results.map { |row| row.values.first }.index(row) + 1
+      [result, true]
     else
-      row_was_text = false
-      row
+      [row, false]
     end
-
-    get_by_number(col: col_num, row: row_num, row_was_text: row_was_text)
   end
 
   # Give it a column or row number, 1-indexed,
@@ -76,14 +84,27 @@ class Report
   end
 
   def inspect
-    "#<Report name: \"#{name}\">"
+    "#<Report name: \"#{name}\" context: `#{@context.inspect}`>"
   end
 
   def self.all
     registry.values
   end
 
-  def self.find(name)
+  def self.find(identifier)
+    if identifier.is_a? Numeric
+      find_by_id(identifier)
+    elsif identifier.is_a? String
+      find_by_name(identifier)
+    end
+  end
+
+  def self.find_by_id(id)
+    all[id - 1].dup
+  end
+  private_class_method :find_by_id
+
+  def self.find_by_name(name)
     key = name.parameterize
     registry.fetch(key) {
       raise ActiveRecord::RecordNotFound, <<~ERR
@@ -91,8 +112,9 @@ class Report
         Create it by adding `app/queries/#{key}.sql`.
 
       ERR
-    }
+    }.dup
   end
+  private_class_method :find_by_name
 
   def self.initialize_all
     Dir[File.expand_path("app/queries/*")].each do |path|

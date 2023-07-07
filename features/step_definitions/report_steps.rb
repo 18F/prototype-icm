@@ -13,10 +13,6 @@ Given("{article} report {string}") do |_, report_name|
   store :report, report_name
 end
 
-Given("{} is {int}") do |attribute, value|
-  store attribute.to_sym, value
-end
-
 Given("start date is {}") do |date|
   store :start_date, Date.parse(date).iso8601
 end
@@ -29,6 +25,21 @@ Given("{article} date is {}") do |_, date|
   store :date, Date.parse(date).iso8601
 end
 
+Given("{} is {int}") do |attribute, value|
+  store attribute.to_sym, value
+end
+
+Given("{article} {} is {int}") do |_, attribute, value|
+  store attribute.to_sym, value
+end
+
+Given("{article} {} is {string}") do |_, attribute, value|
+  store attribute.to_sym, value
+end
+
+# Matches:
+#   date is Q4 FY22
+#   date is Q1 FY2023
 Given("date is Q{int} FY{int}") do |quarter, fy|
   raise ArgumentError unless [1, 2, 3, 4].include?(quarter)
   year = (fy.digits.length == 2) ? 2000 + year : year
@@ -50,6 +61,20 @@ When("I run the report") do
   store :results, report.with(retrieve_all)
 end
 
+Then ("expect column {int} to contain {string}") do |col, expected|
+  assert col_contains(col, /#{expected}/i)
+end
+
+Then ("expect column {int} to match {string} exactly") do |col, expected|
+  assert col_contains(col, /^#{expected}$/)
+end
+
+def col_contains(col, matcher)
+  retrieve(:results).get(col: col).any? { |value|
+    value.match?(matcher)
+  }
+end
+
 Then("expect column {int} and row {int} to be {int}") do |col, row, expected|
   actual = retrieve(:results).get(col: col, row: row)
   assert_equal expected, actual
@@ -69,7 +94,7 @@ Then("expect row {} to have numbers {number_array}") do |row, expected|
   assert_equal expected, actual
 end
 
-# Matches variations like:
+# Matches these and others:
 #   Then expect the value to be {int}
 #   Then expect the count will be {int}
 #   Then expect a sum of {int}

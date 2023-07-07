@@ -25,7 +25,7 @@ FROM
         crtstaff B,
         PM C
    WHERE b.staff_id IS NOT NULL
-     AND b.staff_id LIKE upper('{?staff_id}')
+     AND b.staff_id LIKE upper('{{ staff_id }}')
      AND B.end_date(+) IS NULL
      AND B.parent_type(+) = 'ICM'
      AND A.CLOSED_DT IS NULL
