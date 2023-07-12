@@ -63,6 +63,14 @@ class Report
     end
   end
 
+  def variables
+    names = query.scan(/\{{2}\s*(.*?)\s*\}{2}/).flatten
+    names.inject({}) do |memo, name|
+      memo[name] = @context[name.to_sym]
+      memo
+    end
+  end
+
   def with(variables)
     unless variables.is_a? Hash
       raise ArgumentError, "I expected a hash to be given to #with, but got #{variables.inspect} (#{variables.class})"
@@ -80,11 +88,28 @@ class Report
   end
 
   private def evaluate_query
+    unless variables.values.all? &:present?
+      raise <<~MESSAGE
+        This report doesn't have all the variables it needs to be evalutated.
+
+        I expected all the variables to have non-nil values but got:
+        #{variables.inspect}
+
+        Set these variables by using #with, for example:
+
+            Report.find("#{name}").with(#{variables.map {|k, v| "#{k}: {value}" }.join(", ")})
+
+      MESSAGE
+    end
     Mustache.render(query, @context)
   end
 
   def inspect
     "#<Report name: \"#{name}\" context: `#{@context.inspect}`>"
+  end
+
+  def to_s
+    inspect
   end
 
   def self.all

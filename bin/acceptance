@@ -1,4 +1,8 @@
 #!/usr/bin/env ruby
 
-cmd = "bin/rake acceptance[#{ARGV.first.inspect}]"
+env = ENV.fetch("ENV") { "development" }
+
+puts "Running acceptance tests, environment: #{env}"
+
+cmd = "ENV=#{env} bin/rake acceptance[#{ARGV.first.inspect}]"
 system cmd

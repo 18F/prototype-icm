@@ -32,3 +32,18 @@ ParameterType(
   type: String,
   transformer: ->(string) { string }
 )
+
+ParameterType(
+  name: "reference",
+  regexp: /\{{2}\s*(.*?)\s*\}{2}/,
+  type: String,
+  transformer: ->(key) {
+    dig_params = [
+      "environments",
+      ENV.fetch("ENV"),
+      "reports",
+      *key.split(".")
+    ]
+    YAML::load_file("features/test_values.yml").dig(*dig_params)
+  }
+)

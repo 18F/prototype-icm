@@ -29,11 +29,7 @@ Given("{} is {int}") do |attribute, value|
   store attribute.to_sym, value
 end
 
-Given("{article} {} is {int}") do |_, attribute, value|
-  store attribute.to_sym, value
-end
-
-Given("{article} {} is {string}") do |_, attribute, value|
+Given("{article} {} is {reference}") do |_, attribute, value|
   store attribute.to_sym, value
 end
 
@@ -61,11 +57,11 @@ When("I run the report") do
   store :results, report.with(retrieve_all)
 end
 
-Then ("expect column {int} to contain {string}") do |col, expected|
+Then ("expect column {int} to contain {reference}") do |col, expected|
   assert col_contains(col, /#{expected}/i)
 end
 
-Then ("expect column {int} to match {string} exactly") do |col, expected|
+Then ("expect column {int} to match {reference} exactly") do |col, expected|
   assert col_contains(col, /^#{expected}$/)
 end
 
@@ -73,9 +69,13 @@ def col_contains(col, matcher)
   retrieve(:results).get(col: col).any? { |value|
     value.match?(matcher)
   }
+rescue => e
+  puts "report: #{retrieve(:results)}"
+  puts "res.col: #{retrieve(:results).get(col: col)}"
+  raise e
 end
 
-Then("expect column {int} and row {int} to be {int}") do |col, row, expected|
+Then("expect column {int} and row {int} to be {reference}") do |col, row, expected|
   actual = retrieve(:results).get(col: col, row: row)
   assert_equal expected, actual
 end
@@ -99,13 +99,13 @@ end
 #   Then expect the count will be {int}
 #   Then expect a sum of {int}
 #   Then expect the total is {int}
-Then("expect {article} {value_word} {lead_in} {int}") do |_, _, _, expected|
+Then("expect {article} {value_word} {lead_in} {reference}") do |_, _, _, expected|
   # TODO: Raise if there's more than 1 column and 1 row
   actual = retrieve(:results).get(col: 1, row: 1)
   assert_equal expected, actual
 end
 
-Then("expect {int} results") do |expected|
+Then("expect {reference} results") do |expected|
   actual = retrieve(:results).get().count
   assert_equal expected, actual
 end

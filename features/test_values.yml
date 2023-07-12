@@ -1,0 +1,21 @@
+environments:
+  development:
+    reports:
+      els:
+        new:
+          count: 195
+          case_name: "LOS ANGELES POLICE DEPARTMENT"
+        assignment:
+          staff_id: "KWOODARD"
+          count: 19
+          dj_number: "170-USE-20-4"
+  production:
+    reports:
+      els:
+        new:
+          count: 158
+          case_name: "oracle"
+        assignment:
+          staff_id: "KWOODARD"
+          count: 23
+          dj_number: "170-87-22"

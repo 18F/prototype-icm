@@ -54,7 +54,7 @@ docker exec -it oracledb sqlplus sys/password@XEPDB1 as sysdba
 
 Then run the SQL in `db/data/oracle_setup.sql` by copying and pasting it into the database console.
 
-4. Import the data
+5. Import the data
 
 ```sh
 docker exec -it oracledb impdp system/password@XEPDB1 directory=db_data dumpfile={{ filename of export file }}
@@ -63,8 +63,8 @@ docker exec -it oracledb impdp system/password@XEPDB1 directory=db_data dumpfile
 
 ### Run Tests
 
+1. Run `bin/acceptance` to run acceptance tests. By default, they run for the development environment. Prepend the command with `ENV=production` to run the acceptance tests with production expectations.
 1. Run `rails test` to run unit tests
-1. Run `bin/acceptance` to run acceptance tests for data/reports
 
 
 ### Contributing
@@ -79,9 +79,9 @@ docker exec -it oracledb impdp system/password@XEPDB1 directory=db_data dumpfile
 To add a report:
 
 1. In `app/queries`, create a new SQL file.
-1. Save the file, naming it with a "parameterized" report name - lowercase text, spaces replaced by dashes. For example, a report titled "Caseload report 1" should be saved as `caseload-report-1.sql`.
-1. Paste in the SQL code that produces the desired report. Reports must only produce a single table of output. If you have multiple tables in a report, save specify the table in the filename after the report name, like `caseload-report-1-table-1.sql`.
-1. In the SQL file, replace variable declarations with their Postgres equivalents, and replace the values themselves (the literals) with Mustache tags. Use simple variable names. These variables will be populated with values in the acceptance tests. As an example, replace:
+2. Save the file, giving it a filename that describes the report. If it's a section report, start it with the section abbreviation (e.g. `ELS`).
+3. Paste in the SQL code that produces the desired report. Reports must only produce a single table of output. If you have multiple tables in a report, save specify the table in the filename after the report name, like `{section code} {report name} Table 1.sql`.
+4. In the SQL file, replace variable literal values with Mustache tags. Use simple `snake_cased` variable names. These variables will be populated with values in the acceptance tests. As an example, replace the variable values in the original SQL:
 
 ```sql
 var p_startyear smallint
@@ -95,17 +95,32 @@ WITH charged_hours AS (
     SELECT # ...
 ```
 
-with
+with simple variable names like
 
 ```sql
-DECLARE p_startyear smallint;
-p_startyear := {{ year }};
+var p_startyear smallint
+exec :p_startyear := {{ start_year }};
 
-DECLARE p_startquarter smallint;
-:p_startquarter := {{ quarter }};
+var p_startquarter smallint
+exec :p_startquarter := {{ quarter }};
 
 WITH charged_hours AS (
 
     SELECT # ...
 ```
 
+5. Make sure the report made it in. Run `rails console` and then
+
+```ruby
+Report.all.map(&:name).grep /a snippet of the report title/
+```
+
+6. Check the results by running the report:
+
+```ruby
+Report.find({ title or ID }). # Find a report by its full name or by its position in Report.all
+  with(required_var: value).  # Give it all the values it needs for evaluation. See a report's variables with Report#variables.
+  results.first(10)           # To keep displayed results to a minimum
+```
+
+7. Add expectations for a report by writing acceptance tests. Replace literal expectation values with tags like `{{ section.report.expectation_name }}` and fill in the values for development and production in `features/test_values.yml`.
