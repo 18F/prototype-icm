@@ -1,1 +1,1 @@
-SELECT {{ count }} as count;
+SELECT {{ count }} as count

@@ -13,18 +13,59 @@ This is a de-risking prototype supporting the implementation of a new case manag
 
 We are specifically not using 18F's Rails template because there are no plans to deploy this code. This prototype is entirely for the purposes of gathering information, informing decisions, de-risking, and resolving ambiguity.
 
-### Initial setup
+## Initial setup
+
+### First steps
 
 1. Clone this repository
+1. [Follow the Oracle installation instructions](https://www.rubydoc.info/github/kubo/ruby-oci8/file/docs/install-on-osx.md)
 1. Run `bundle install` to install dependencies
-1. Make sure `db/schema.rb` hasn't been overridden (this is a known bug from running `db:migrate`)
-1. Run `rails db:schema:load` to set up the initial database
-1. If there are migrations because we've started to iterate on the data model, run `rails db:migrate`. Because we're iterating on the data model itself, we do not commit updated versions of the schema (post-migration) to the repository. Remember to check for schema file override after running migrations.
-1. See import data instructions below before running tests
+1. Follow the next section on setting up an Oracle database
 
-### Running Tests
+### Set up an Oracle database
+
+If you have a database export, you can set up an Oracle database with it. Make sure the file is in `db/data`, or change the commands to point to your preferred setup.
+
+1. Get a copy of the database export file (ending in `.dmp`) and a copy of the oracle_setup.sql script from a teammate.
+
+2. Start the database. Make sure you're running this command in such a way that `-v ./db/data` points to the right place, or modify the path accordingly.
+
+```sh
+docker run \
+  --name oracledb \
+  -p 1521:1521 \
+  -e ORACLE_PWD=password \
+  -v ./db/data:/db/data \
+  -v /opt/oracle/oradata \
+  container-registry.oracle.com/database/express:21.3.0-xe
+```
+
+3. Check if the `db/data` volume mounted properly. You should see the same files using this command as you do in the application's `db/data` folder.
+
+```sh
+docker exec -it oracledb ls /db/data
+```
+
+4. Set up the database. First log in:
+
+```sh
+docker exec -it oracledb sqlplus sys/password@XEPDB1 as sysdba
+```
+
+Then run the SQL in `db/data/oracle_setup.sql` by copying and pasting it into the database console.
+
+5. Import the data
+
+```sh
+docker exec -it oracledb impdp system/password@XEPDB1 directory=db_data dumpfile={{ filename of export file }}
+```
+
+
+### Run Tests
+
+1. Run `bin/acceptance` to run acceptance tests. By default, they run for the development environment. Prepend the command with `ENV=production` to run the acceptance tests with production expectations.
 1. Run `rails test` to run unit tests
-1. Run `rake cucumber` to run acceptance tests for data/reports
+
 
 ### Contributing
 
@@ -32,26 +73,15 @@ We are specifically not using 18F's Rails template because there are no plans to
 1. Commit to the branch. Make sure your code is reasonably well-tested.
 1. When you're ready, push to the branch and create a pull request
 
-### Import data
-
-Data is private to members of 18F and CRT, and is not shared in this repository.
-
-To import data:
-
-1. Drop a copy of a data table csv into `db/data` (ask a team member for the current sample file)
-1. Run `rake import`.
-1. In a different window, open up a database console. The easist way to do this is to run `rails db`. If you're importing data to the test database, prepend the command with `RAILS_ENV=test`.
-1. Copy the commands generated from `rake import`, table by table, into the database console. This will copy in the data, populating the database.
-
 
 ### Add reports
 
 To add a report:
 
 1. In `app/queries`, create a new SQL file.
-1. Save the file, naming it with a "parameterized" report name - lowercase text, spaces replaced by dashes. For example, a report titled "Caseload report 1" should be saved as `caseload-report-1.sql`.
-1. Paste in the SQL code that produces the desired report. Reports must only produce a single table of output. If you have multiple tables in a report, save specify the table in the filename after the report name, like `caseload-report-1-table-1.sql`.
-1. In the SQL file, replace variable declarations with their Postgres equivalents, and replace the values themselves (the literals) with Mustache tags. Use simple variable names. These variables will be populated with values in the Cucumber tests. As an example, replace:
+2. Save the file, giving it a filename that describes the report. If it's a section report, start it with the section abbreviation (e.g. `ELS`).
+3. Paste in the SQL code that produces the desired report. Reports must only produce a single table of output. If you have multiple tables in a report, save specify the table in the filename after the report name, like `{section code} {report name} Table 1.sql`.
+4. In the SQL file, replace variable literal values with Mustache tags. Use simple `snake_cased` variable names. These variables will be populated with values in the acceptance tests. As an example, replace the variable values in the original SQL:
 
 ```sql
 var p_startyear smallint
@@ -65,16 +95,32 @@ WITH charged_hours AS (
     SELECT # ...
 ```
 
-with
+with simple variable names like
 
 ```sql
-DECLARE p_startyear smallint;
-p_startyear := {{ year }};
+var p_startyear smallint
+exec :p_startyear := {{ start_year }};
 
-DECLARE p_startquarter smallint;
-:p_startquarter := {{ quarter }};
+var p_startquarter smallint
+exec :p_startquarter := {{ quarter }};
 
 WITH charged_hours AS (
 
     SELECT # ...
 ```
+
+5. Make sure the report made it in. Run `rails console` and then
+
+```ruby
+Report.all.map(&:name).grep /a snippet of the report title/
+```
+
+6. Check the results by running the report:
+
+```ruby
+Report.find({ title or ID }). # Find a report by its full name or by its position in Report.all
+  with(required_var: value).  # Give it all the values it needs for evaluation. See a report's variables with Report#variables.
+  results.first(10)           # To keep displayed results to a minimum
+```
+
+7. Add expectations for a report by writing acceptance tests. Replace literal expectation values with tags like `{{ section.report.expectation_name }}` and fill in the values for development and production in `features/test_values.yml`.
