@@ -40,7 +40,7 @@ class ReportTest < ActiveSupport::TestCase
       {col: 1, row: 3, expect: "CRM"}
     ]
     examples.each do |example|
-      opts = example.reject { |k, _| k == :expect }
+      opts = example.except(:expect)
       actual = report.get(**opts)
       assert_equal example[:expect], actual
     end

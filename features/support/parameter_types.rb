@@ -44,6 +44,6 @@ ParameterType(
       "reports",
       *key.split(".")
     ]
-    YAML::load_file("features/test_values.yml").dig(*dig_params)
+    YAML.load_file("features/test_values.yml").dig(*dig_params)
   }
 )

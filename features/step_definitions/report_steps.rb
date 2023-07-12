@@ -57,11 +57,11 @@ When("I run the report") do
   store :results, report.with(retrieve_all)
 end
 
-Then ("expect column {int} to contain {reference}") do |col, expected|
+Then("expect column {int} to contain {reference}") do |col, expected|
   assert col_contains(col, /#{expected}/i)
 end
 
-Then ("expect column {int} to match {reference} exactly") do |col, expected|
+Then("expect column {int} to match {reference} exactly") do |col, expected|
   assert col_contains(col, /^#{expected}$/)
 end
 
@@ -106,7 +106,7 @@ Then("expect {article} {value_word} {lead_in} {reference}") do |_, _, _, expecte
 end
 
 Then("expect {reference} results") do |expected|
-  actual = retrieve(:results).get().count
+  actual = retrieve(:results).get.count
   assert_equal expected, actual
 end
 
@@ -115,7 +115,7 @@ Then("expect results") do
     You have an `expect values` clause which does not actually run a test.
     Remember to replace it later.
   WARNING
-  results = retrieve(:results).get()
+  results = retrieve(:results).get
   if results.count > 10
     warn "There are #{results.count} results, here are the first 10."
     puts results.first(10).map { |res| res.to_s.truncate(100) }

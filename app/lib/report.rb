@@ -65,9 +65,8 @@ class Report
 
   def variables
     names = query.scan(/\{{2}\s*(.*?)\s*\}{2}/).flatten
-    names.inject({}) do |memo, name|
+    names.each_with_object({}) do |name, memo|
       memo[name] = @context[name.to_sym]
-      memo
     end
   end
 
@@ -88,7 +87,7 @@ class Report
   end
 
   private def evaluate_query
-    unless variables.values.all? &:present?
+    unless variables.values.all?(&:present?)
       raise <<~MESSAGE
         This report doesn't have all the variables it needs to be evalutated.
 
@@ -97,7 +96,7 @@ class Report
 
         Set these variables by using #with, for example:
 
-            Report.find("#{name}").with(#{variables.map {|k, v| "#{k}: {value}" }.join(", ")})
+            Report.find("#{name}").with(#{variables.map { |k, v| "#{k}: {value}" }.join(", ")})
 
       MESSAGE
     end
@@ -143,7 +142,7 @@ class Report
 
   def self.initialize_all
     Dir[File.expand_path("app/queries/*")].each do |path|
-      base, _, ext = File.basename(path).partition(".")
+      base, _, _ext = File.basename(path).partition(".")
       query = File.read(path)
       Report.new(name: base, query: query)
     end

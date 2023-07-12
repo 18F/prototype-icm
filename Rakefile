@@ -18,7 +18,7 @@ desc "Generate the command to import data"
 task :import do
   folder = "db/data"
   result = Dir.children(folder).map do |filename|
-    base, ext = filename.split(".")
+    base, _ext = filename.split(".")
     path = File.expand_path(File.join(".", folder, filename))
     headers = CSV.open(path, "r") { |csv| csv.first }.map { |x| "\"#{x}\"" }
     "COPY \"#{base}\"(#{headers.join(",")}) FROM '#{path}' CSV HEADER;"
