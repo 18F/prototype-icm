@@ -64,7 +64,7 @@ docker exec -it oracledb impdp system/password@XEPDB1 directory=db_data dumpfile
 ### Run Tests
 
 1. Run `rails test` to run unit tests
-1. Run `rake cucumber` to run acceptance tests for data/reports
+1. Run `bin/acceptance` to run acceptance tests for data/reports
 
 
 ### Contributing
@@ -81,7 +81,7 @@ To add a report:
 1. In `app/queries`, create a new SQL file.
 1. Save the file, naming it with a "parameterized" report name - lowercase text, spaces replaced by dashes. For example, a report titled "Caseload report 1" should be saved as `caseload-report-1.sql`.
 1. Paste in the SQL code that produces the desired report. Reports must only produce a single table of output. If you have multiple tables in a report, save specify the table in the filename after the report name, like `caseload-report-1-table-1.sql`.
-1. In the SQL file, replace variable declarations with their Postgres equivalents, and replace the values themselves (the literals) with Mustache tags. Use simple variable names. These variables will be populated with values in the Cucumber tests. As an example, replace:
+1. In the SQL file, replace variable declarations with their Postgres equivalents, and replace the values themselves (the literals) with Mustache tags. Use simple variable names. These variables will be populated with values in the acceptance tests. As an example, replace:
 
 ```sql
 var p_startyear smallint

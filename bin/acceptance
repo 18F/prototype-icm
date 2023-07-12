@@ -1,3 +1,4 @@
 #!/usr/bin/env ruby
 
-system("bin/rake acceptance")
+cmd = "bin/rake acceptance[#{ARGV.first.inspect}]"
+system cmd

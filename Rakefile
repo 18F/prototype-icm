@@ -7,8 +7,11 @@ require_relative "config/application"
 Rails.application.load_tasks
 
 desc "Run acceptance tests without typing `cucumber`"
-task :acceptance do
-  Rake::Task["cucumber"].invoke
+task :acceptance, [:path] => :environment do |task, args|
+  # I wasn't able to add a path via the rake task:
+  #   Rake::Task["cucumber"].invoke(args[:path])
+  cmd = "bundle exec cucumber #{args[:path]}"
+  system cmd
 end
 
 desc "Generate the command to import data"
