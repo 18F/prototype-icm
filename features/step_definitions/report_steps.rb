@@ -57,12 +57,18 @@ When("I run the report") do
   store :results, report.with(retrieve_all)
 end
 
-Then("expect column {int} to contain {reference}") do |col, expected|
-  assert col_contains(col, /#{expected}/i)
+TYPES = %w(reference string int)
+
+TYPES.each do |type_name|
+  Then("expect column {int} to contain {#{type_name}}") do |col, expected|
+    assert col_contains(col, /#{expected}/i)
+  end
 end
 
-Then("expect column {int} to match {reference} exactly") do |col, expected|
-  assert col_contains(col, /^#{expected}$/)
+TYPES.each do |type_name|
+  Then("expect column {int} to match {#{type_name}} exactly") do |col, expected|
+    assert col_contains(col, /^#{expected}$/)
+  end
 end
 
 def col_contains(col, matcher)
@@ -105,9 +111,11 @@ Then("expect {article} {value_word} {lead_in} {reference}") do |_, _, _, expecte
   assert_equal expected, actual
 end
 
-Then("expect {reference} results") do |expected|
-  actual = retrieve(:results).get.count
-  assert_equal expected, actual
+TYPES.each do |type_name|
+  Then("expect {#{type_name}} results") do |expected|
+    actual = retrieve(:results).get.count
+    assert_equal expected, actual
+  end
 end
 
 Then("expect results") do

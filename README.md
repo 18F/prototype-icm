@@ -4,6 +4,12 @@ This is a de-risking prototype supporting the implementation of a new case manag
 
 **Objective**: Learn as much as we can about CRT's reporting needs and the constraints a future data model must support.
 
+**Outputs**:
+- Discovering must-have data model constraints to support the vendor evaluation.
+- A pre-run of part of the data migration.
+- A data migration acceptance testing script, human-readable.
+- A data migration acceptance testing script, machine-readable.
+
 **Method**:
 - Start with CRT's current data model and sample data.
 - Use a variant of the red-green-refactor loop, but for reports and data, to iterate on the data model:
