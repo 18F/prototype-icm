@@ -9,6 +9,22 @@ environments:
           staff_id: "KWOODARD"
           count: 19
           dj_number: "170-USE-20-4"
+      spl:
+        docket:
+          staff_id: "BTAYLOE"
+          count: 9
+          case_name: "Oregon State Hospital"
+        hours:
+          staff_id: "BTAYLOE"
+          count: 8
+          dj_number:
+            1: "HCFAC"
+            2: "ADMIN"
+            3: "168-65-7"
+        assignment:
+          staff_id: "BTAYLOE"
+          count: 9
+          case_name: "Oregon State Hospital"
   production:
     reports:
       els:

@@ -87,7 +87,7 @@ To add a report:
 1. In `app/queries`, create a new SQL file.
 2. Save the file, giving it a filename that describes the report. If it's a section report, start it with the section abbreviation (e.g. `ELS`).
 3. Paste in the SQL code that produces the desired report. Reports must only produce a single table of output. If you have multiple tables in a report, save specify the table in the filename after the report name, like `{section code} {report name} Table 1.sql`.
-4. In the SQL file, replace variable literal values with Mustache tags. Use simple `snake_cased` variable names. These variables will be populated with values in the acceptance tests. As an example, replace the variable values in the original SQL:
+4. In the SQL file, replace variable literal values with Oracle-style interpolation tags `{? var_name }`. Use simple `snake_cased` variable names. These variables will be populated with values in the acceptance tests. As an example, replace the variable values in the original SQL:
 
 ```sql
 var p_startyear smallint
@@ -105,10 +105,10 @@ with simple variable names like
 
 ```sql
 var p_startyear smallint
-exec :p_startyear := {{ start_year }};
+exec :p_startyear := {? start_year };
 
 var p_startquarter smallint
-exec :p_startquarter := {{ quarter }};
+exec :p_startquarter := {? quarter };
 
 WITH charged_hours AS (
 

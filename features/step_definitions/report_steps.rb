@@ -1,5 +1,6 @@
 DOJ_FOUNDING = 1870
 CURRENT_YEAR = Date.today.year
+TYPES = %w(reference string int)
 
 Given("report {string}") do |report_name|
   store :report, report_name
@@ -25,12 +26,16 @@ Given("{article} date is {}") do |_, date|
   store :date, Date.parse(date).iso8601
 end
 
-Given("{} is {int}") do |attribute, value|
-  store attribute.to_sym, value
+TYPES.each do |type_name|
+  Given("{} is {#{type_name}}") do |attribute, value|
+    store attribute.to_sym, value
+  end
 end
 
-Given("{article} {} is {reference}") do |_, attribute, value|
-  store attribute.to_sym, value
+TYPES.each do |type_name|
+  Given("{article} {} is {#{type_name}}") do |_, attribute, value|
+    store attribute.to_sym, value
+  end
 end
 
 # Matches:
@@ -55,18 +60,26 @@ end
 When("I run the report") do
   report = Report.find(retrieve(:report))
   store :results, report.with(retrieve_all)
+  # Run this to get query runtime errors to happen here.
+  report.results
+rescue QueryEvaluationError => e
+  fail_query_evaluation_error(e)
 end
-
-TYPES = %w(reference string int)
 
 TYPES.each do |type_name|
   Then("expect column {int} to contain {#{type_name}}") do |col, expected|
     assert col_contains(col, /#{expected}/i)
   end
-end
 
-TYPES.each do |type_name|
+  Then("expect column {string} to contain {#{type_name}}") do |col, expected|
+    assert col_contains(col, /#{expected}/i)
+  end
+
   Then("expect column {int} to match {#{type_name}} exactly") do |col, expected|
+    assert col_contains(col, /^#{expected}$/)
+  end
+
+  Then("expect column {string} to match {#{type_name}} exactly") do |col, expected|
     assert col_contains(col, /^#{expected}$/)
   end
 end
@@ -124,12 +137,21 @@ Then("expect results") do
     Remember to replace it later.
   WARNING
   results = retrieve(:results).get
-  if results.count > 10
+  if results.count == 0
+    raise "There are no results!"
+  elsif results.count > 10
     warn "There are #{results.count} results, here are the first 10."
-    puts results.first(10).map { |res| res.to_s.truncate(100) }
+    format_results results.first(10).map { |res| res.to_s.truncate(100) }
   else
-    puts results
+    format_results(results)
   end
+end
+
+def format_results(results)
+  puts "Results"
+  puts "-------"
+  puts results
+  puts "\n-------"
 end
 
 def store(key, value)
@@ -152,4 +174,24 @@ def assert_number(*args)
   args.each do |arg|
     raise ArgumentError unless arg.is_a?(Numeric)
   end
+end
+
+
+def fail_query_evaluation_error(error_object)
+  nil_vars = error_object.variables.select { |k, v| k if v.nil? }
+  examples = nil_vars.map.with_index do |pair, i|
+    k, _ = pair
+    "And #{k} is {YOUR VALUE HERE}"
+  end.join("\n    ")
+  fail <<~MESSAGE
+
+    The report "#{error_object.report_name}" doesn't have all the variables
+    it needs in order to run.
+
+    Please define values for #{nil_vars.keys.map {|v| "`#{v}`"}.join(", ")} by adding them to the test,
+    in the "Given" section after the report, like:
+
+        #{examples}
+
+  MESSAGE
 end

@@ -3,8 +3,8 @@ Feature: ELS
     Given the report "ELS - New Open Matters and Cases by District"
     And the date is May 1 2023
     When I run the report
-    Then expect 195 results
-    Then expect column 3 to contain "LOS ANGELES POLICE DEPARTMENT"
+    Then expect {{ els.new.count }} results
+    Then expect column 3 to contain {{ els.new.case_name }}
 
   Scenario: Case and Matter Assignment by attorney
     Given the report "ELS - Case and Matter Assignment by attorney"
