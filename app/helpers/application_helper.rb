@@ -40,10 +40,10 @@ module ApplicationHelper
     db.tables.each do |table_name|
       begin
         initialize_model(table_name)
-        print "."
+        # print "."
       rescue NameError => e
         erroneous_models.push([table_name, e])
-        print "⛳️"
+        # print "⛳️"
       end
     end
     handle_erroneous_models(erroneous_models)
