@@ -26,7 +26,7 @@ module ApplicationHelper
   #   play well with CRT's naming convention.
   def initialize_model(table_name)
     Kernel.const_set(
-      table_name.classify,
+      table_name.classify.gsub(/([#|$])/, ''),
       Class.new(ApplicationRecord) do
         self.table_name = table_name
       end
@@ -35,15 +35,12 @@ module ApplicationHelper
 
   # Dynamically create all the models
   def initialize_models
-    puts ""
     erroneous_models = []
     db.tables.each do |table_name|
       begin
         initialize_model(table_name)
-        # print "."
       rescue NameError => e
         erroneous_models.push([table_name, e])
-        # print "⛳️"
       end
     end
     handle_erroneous_models(erroneous_models)
@@ -51,8 +48,7 @@ module ApplicationHelper
 
   def handle_erroneous_models(model_names)
     return false unless model_names.any?
-    puts "\nThe following tables produced errors:"
-    puts "-------------------------------------\n"
+    puts "\nThe following tables produced errors, so there are no models for them:\n"
     model_names.each do |table_name, error|
       puts "#{table_name}\t\t#{error.original_message}"
     end
