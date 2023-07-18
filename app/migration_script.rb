@@ -24,12 +24,12 @@ module MigrationScript
   class MoveVictimNamesToVictimsTable < MigrationScript::Base
     def perform
       Crtvictim.first(100).pluck(:victim_first_name).each do |first_name|
-        Kernel::Victim.create!(first_name: first_name)
+        Victim.create!(first_name: first_name)
       end
     end
 
     def test_cases
-      assert_equal 100, Kernel::Victim.count
+      assert_equal 100, Victim.count
     end
   end
 

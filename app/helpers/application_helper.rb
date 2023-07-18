@@ -25,7 +25,7 @@ module ApplicationHelper
   #   setting the table name because the auto-linker doesn't
   #   play well with CRT's naming convention.
   def initialize_model(table_name)
-    Kernel.const_set(
+    Object.const_set(
       table_name.classify.gsub(/([#|$])/, ''),
       Class.new(ApplicationRecord) do
         self.table_name = table_name

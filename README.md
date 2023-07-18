@@ -179,11 +179,7 @@ The code inside the direction blocks — `direction.up` or `direction.down` — 
 
 We're doing this to keep our migration scripts organized, to keep the migration files themselves more readable, and to keep the data migration code more testable.
 
-Ok, one last note — model classes are a little weird, and a little flaky.
-
-**Weird**: Because of how we set up model classes, they're unfortunately subclasses of Kernel, so when referencing models, qualify it by writing it like `Kernel::ModelClass` or `::ModelClass`.
-
-**Flaky**: I've found that a migration file on occasion doesn't understand a class reference, even when qualified — perhaps because the migration finishes loading before the dynamic models aren't all initialized. Just try re-running it. You could also do prepend the migration with `assert defined?(::ModelClass)` to catch things before the migration starts.
+Ok, one last note — model classes can be a little flaky. I've found that a migration file on occasion doesn't understand a class reference, even when qualified — perhaps because the migration finishes loading before the dynamic models aren't all initialized. Just try re-running it. You could also do prepend the migration with `assert defined?(ModelClass)` to catch things before the migration starts.
 
 Lastly, we test our migrations! When you create a subclass of MigrationScript::Base, you have to implement methods `#perform` and `#test_cases`. The `#perform` method is what runs the data part of the migration itself. Fill the `#test_cases` method with Test::Unit style assertions, to ensure that the migration ran as expected.
 
@@ -193,12 +189,12 @@ As an overly simple example, here's an example that moves the first names of the
 class MoveVictimNamesToVictimsTable < MigrationScript::Base
   def perform
     Crtvictim.first(100).pluck(:victim_first_name).each do |first_name|
-      ::Victim.create!(first_name: first_name)
+      Victim.create!(first_name: first_name)
     end
   end
 
   def test_cases
-    assert_equal 100, ::Victim.count
+    assert_equal 100, Victim.count
   end
 end
 ```
