@@ -1,1 +1,1 @@
-require_relative '../../app/migration_script.rb'
+require_relative '../../app/lib/migration_script.rb'

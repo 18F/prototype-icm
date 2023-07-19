@@ -1,14 +1,20 @@
 module ApplicationHelper
 
+  RAILS_TABLES = ["schema_migrations"]
+
   def db
     @db ||= ActiveRecord::Base.connection
+  end
+
+  def all_tables
+    db.tables - RAILS_TABLES
   end
 
   # Gets every tables' column names.
   # Use with #grep to search
   def all_column_names(count=nil)
-    num = count || db.tables.count
-    db.tables.first(num).flat_map.with_index do |table, i|
+    num = count || all_tables.count
+    all_tables.first(num).flat_map.with_index do |table, i|
       puts "processing table (#{i+1}/#{num}): #{table}"
       db.columns(table).map(&:name).map do |col|
         "#{table}.#{col}"
@@ -36,8 +42,9 @@ module ApplicationHelper
   # Dynamically create all the models
   def initialize_models
     erroneous_models = []
-    db.tables.each do |table_name|
+    all_tables.each do |table_name|
       begin
+        raise NameError if RAILS_TABLES.include?(table_name)
         initialize_model(table_name)
       rescue NameError => e
         erroneous_models.push([table_name, e])

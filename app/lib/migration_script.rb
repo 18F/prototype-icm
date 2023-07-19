@@ -5,6 +5,7 @@ module MigrationScript
   class MigrationScript::Base
 
     include Test::Unit::Assertions
+    include ApplicationHelper
 
     def self.perform
       instance = new
@@ -23,13 +24,15 @@ module MigrationScript
 
   class MoveVictimNamesToVictimsTable < MigrationScript::Base
     def perform
+      initialize_model("victims")
+
       Crtvictim.first(100).pluck(:victim_first_name).each do |first_name|
-        Victim.create!(first_name: first_name)
+        ::Victim.create!(first_name: first_name)
       end
     end
 
     def test_cases
-      assert_equal 100, Victim.count
+      assert_equal 100, ::Victim.count
     end
   end
 
