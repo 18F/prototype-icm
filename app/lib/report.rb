@@ -1,14 +1,23 @@
 require "forwardable"
 
+# Overwrites Mustache's open and close tags
+require_relative "./ext/mustache.rb"
+require_relative "./errors.rb"
+
 class Report
-  attr_reader :name, :query
+  PARSER = Mustache::Parser.new
+  OTAG = Regexp.escape(PARSER.otag)
+  CTAG = Regexp.escape(PARSER.ctag)
+
+  attr_reader :id, :name, :query
 
   class << self
     extend Forwardable
     def_delegators :all, :count, :first, :last
   end
 
-  def initialize(name:, query:)
+  def initialize(id:, name:, query:)
+    @id = id
     @name = name
     @query = query
     @context = {}
@@ -26,12 +35,18 @@ class Report
     )
   end
 
+  # Handle when there is no column
   private def get_column_number(col)
-    if col.is_a?(String)
-      results.first.keys.index(col) + 1
-    else
-      col
+    first_result = results.first
+    return col unless col.is_a?(String)
+    maybe_key = first_result.keys.index(col)
+    if maybe_key.nil?
+      raise ArgumentError, <<~MESSAGE
+        I couldn't find #{col} in this list of columns:
+        #{first_result.keys.join(", ")}
+      MESSAGE
     end
+    maybe_key + 1
   end
 
   private def get_row_number(row)
@@ -63,8 +78,12 @@ class Report
     end
   end
 
+  private def tag_matcher
+    @matcher ||= Regexp.new("#{OTAG}\s*(.*?)\s*#{CTAG}")
+  end
+
   def variables
-    names = query.scan(/\{{2}\s*(.*?)\s*\}{2}/).flatten
+    names = query.scan(tag_matcher).flatten
     names.each_with_object({}) do |name, memo|
       memo[name] = @context[name.to_sym]
     end
@@ -82,29 +101,19 @@ class Report
     return @stubbed_results if @stubbed_results.present?
     ActiveRecord::Base.connection.exec_query(evaluate_query).to_a
   rescue ActiveRecord::StatementInvalid => e
-    puts "I tried to query with:\n\t#{evaluate_query}"
+    puts "I tried to query with:\n\n#{evaluate_query}"
     raise e
   end
 
   private def evaluate_query
     unless variables.values.all?(&:present?)
-      raise <<~MESSAGE
-        This report doesn't have all the variables it needs to be evalutated.
-
-        I expected all the variables to have non-nil values but got:
-        #{variables.inspect}
-
-        Set these variables by using #with, for example:
-
-            Report.find("#{name}").with(#{variables.map { |k, v| "#{k}: {value}" }.join(", ")})
-
-      MESSAGE
+      raise QueryEvaluationError.new(variables, name)
     end
     Mustache.render(query, @context)
   end
 
   def inspect
-    "#<Report name: \"#{name}\" context: `#{@context.inspect}`>"
+    "#<Report id: #{id}, name: \"#{name}\", context: `#{@context.inspect}`>"
   end
 
   def to_s
@@ -141,10 +150,10 @@ class Report
   private_class_method :find_by_name
 
   def self.initialize_all
-    Dir[File.expand_path("app/queries/*")].each do |path|
+    Dir[File.expand_path("app/queries/*")].each.with_index do |path, i|
       base, _, _ext = File.basename(path).partition(".")
       query = File.read(path)
-      Report.new(name: base, query: query)
+      Report.new(id: i+1, name: base, query: query)
     end
   end
 

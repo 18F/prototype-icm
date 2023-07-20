@@ -4,5 +4,5 @@ env = ENV.fetch("ENV") { "development" }
 
 puts "Running acceptance tests, environment: #{env}"
 
-cmd = "ENV=#{env} bin/rake acceptance[#{ARGV.first.inspect}]"
+cmd = "ENV=#{env} bin/rake acceptance[#{ARGV.first}]"
 system cmd
