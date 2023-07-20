@@ -61,6 +61,7 @@ module ApplicationHelper
       puts "#{table_name}\t\t#{error.original_message}"
     end
     puts "\n\n"
+
     true # suppress printing of table names
   end
 end
