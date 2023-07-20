@@ -35,6 +35,7 @@ module ApplicationHelper
       table_name.classify.gsub(/([#|$])/, ''),
       Class.new(ApplicationRecord) do
         self.table_name = table_name
+        self.inheritance_column = false # Prevents issues with columns named `type`
       end
     )
   end
