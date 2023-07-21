@@ -1,3 +1,5 @@
+# This is the file for custom error types.
+
 class QueryEvaluationError < StandardError
 
   attr_reader :variables, :report_name

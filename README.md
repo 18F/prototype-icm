@@ -99,10 +99,10 @@ with simple variable names like
 
 ```sql
 var p_startyear smallint
-exec :p_startyear := {{ start_year }};
+exec :p_startyear := {?start_year};
 
 var p_startquarter smallint
-exec :p_startquarter := {{ quarter }};
+exec :p_startquarter := {?quarter};
 
 WITH charged_hours AS (
 

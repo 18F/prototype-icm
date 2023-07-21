@@ -1,5 +1,7 @@
-# Overwrite Mustache's parser with Oracle SQL's opening and closing tags
-#   so that we don't have to change the queries when we add them.
+# Overwrite Mustache's parser to use Oracle SQL's opening and closing
+# tags instead of the default "{{" and "}}".
+# This way, we don't have to change the SQL queries from DOJ when we
+# add them into this app.
 
 require 'mustache' # SMELL: This is likely unnecessary.
 

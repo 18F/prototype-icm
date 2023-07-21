@@ -4,6 +4,14 @@ require "forwardable"
 require_relative "./ext/mustache.rb"
 require_relative "./errors.rb"
 
+# This class makes looking up and running reports more convenient.
+# Report.all gets a list of reports, based on the contents of app/queries
+# Report.find gets a single report by "id" or by name
+# Report#get grabs the results of a given row and/or column, which can
+#   be looked up by name or by integer (1-indexed, e.g. col: 1 = column 1)
+# Report#with assigns variables to use in evaluating a query with places for variables
+# Report#variables checks whether the report has all the variables it needs to run
+# Report#stub_results will return a given value as results, for use in testing/prototyping a report
 class Report
   PARSER = Mustache::Parser.new
   OTAG = Regexp.escape(PARSER.otag)
