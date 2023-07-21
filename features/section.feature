@@ -5,7 +5,7 @@ Feature: Section reports
     And section is "CRM"
     And date1 is "03/15/2020"
     And date2 is "01/06/2021"
-    # And dj_number is "000-000-000"
+    And dj_number is "168-65-7"
     When I run the report
     Then expect results
 

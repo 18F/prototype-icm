@@ -8,7 +8,7 @@ Feature: ELS
 
   Scenario: Case and Matter Assignment by attorney
     Given the report "ELS - Case and Matter Assignment by attorney"
-    And the staff_id is {{ els.assignment.staff_id }}
+    And staff_id is {{ els.assignment.staff_id }}
     When I run the report
     Then expect {{ els.assignment.count }} results
     And expect column 5 to contain {{ els.assignment.dj_number }}

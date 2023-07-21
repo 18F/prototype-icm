@@ -30,12 +30,10 @@ TYPES.each do |type_name|
   Given("{} is {#{type_name}}") do |attribute, value|
     store attribute.to_sym, value
   end
-end
 
-TYPES.each do |type_name|
-  Given("{article} {} is {#{type_name}}") do |_, attribute, value|
-    store attribute.to_sym, value
-  end
+  # Given("{article} {} is {#{type_name}}") do |_, attribute, value|
+  #   store attribute.to_sym, value
+  # end
 end
 
 # Matches:
