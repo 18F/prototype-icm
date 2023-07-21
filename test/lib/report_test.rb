@@ -3,6 +3,7 @@ require "test_helper"
 class ReportTest < ActiveSupport::TestCase
   def setup
     @report = Report.new(
+      id: 1,
       name: "Caseload report 1",
       query: "SELECT 101 count, 2.01 avg_data FROM DUAL"
     )
@@ -25,7 +26,7 @@ class ReportTest < ActiveSupport::TestCase
   end
 
   test "gets values by column name" do
-    report = Report.new(name: "stubbed query", query: "shouldn't matter")
+    report = Report.new(id: 2, name: "stubbed query", query: "shouldn't matter")
     report.stub_results(
       [
         {" " => "HCE", "A" => 10, "B" => 20},
