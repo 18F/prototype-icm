@@ -99,10 +99,14 @@ class Report
 
   def results
     return @stubbed_results if @stubbed_results.present?
-    ActiveRecord::Base.connection.exec_query(evaluate_query).to_a
+    @results ||= ActiveRecord::Base.connection.exec_query(evaluate_query).to_a
   rescue ActiveRecord::StatementInvalid => e
     puts "I tried to query with:\n\n#{evaluate_query}"
     raise e
+  end
+
+  def clear_results
+    @results = nil
   end
 
   private def evaluate_query

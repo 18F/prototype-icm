@@ -1,8 +1,17 @@
+-- Creates virtual table matter_hours
+--   matter_no: Matter ID
+--   crt_open_date: Matter open pen date
+--   closed_dt: Matter closed date
+--   total_days:
+--     Duration measured by closed date - open date.
+--     Does not account for weekends.
+--   total_hours:
+--     Sum of hours billed to this project
 WITH matter_hours AS (
   SELECT
     matters.matter_no,
-    matters.closed_dt,
     matters.crt_open_date,
+    matters.closed_dt,
     matters.closed_dt - matters.crt_open_date total_days,
     SUM(hours.hours) total_hours
   FROM
@@ -23,8 +32,13 @@ WITH matter_hours AS (
 SELECT
   ROUND(AVG(matter_hours.total_hours)) "Average hours",
   ROUND(MEDIAN(matter_hours.total_hours)) "Median hours",
+  ROUND(MAX(matter_hours.total_hours)) "Max hours",
+  ROUND(MIN(matter_hours.total_hours)) "Min hours",
+
   ROUND(AVG(matter_hours.total_days)) "Average days",
-  ROUND(MEDIAN(matter_hours.total_days)) "Median days"
+  ROUND(MEDIAN(matter_hours.total_days)) "Median days",
+  ROUND(MAX(matter_hours.total_days)) "Max days",
+  ROUND(MIN(matter_hours.total_days)) "Min days"
 FROM
   matter_hours
 WHERE
