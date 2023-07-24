@@ -9,7 +9,7 @@ class MoveVictimNamesToVictimsTable < ActiveRecord::Migration[7.0]
 
       reversible do |direction|
         direction.up do
-          MigrationScript::MoveVictimNamesToVictimsTable.perform
+          DataTransform::MoveVictimNamesToVictimsTable.perform
         end
       end
     end
