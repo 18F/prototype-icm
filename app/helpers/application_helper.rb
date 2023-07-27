@@ -1,6 +1,11 @@
 module ApplicationHelper
 
-  RAILS_TABLES = ["schema_migrations"]
+  RAILS_TABLES = %w(
+    schema_migrations
+    defendants
+    organizations
+    defendants_organizations
+  )
 
   def db
     @db ||= ActiveRecord::Base.connection
@@ -64,4 +69,50 @@ module ApplicationHelper
 
     true # suppress printing of table names
   end
+
+  def tally_by(attribute_key, first: nil)
+    limit = first || Crtdefendant.count
+    maybe_cached_value = try_cache(attribute_key, limit)
+    return maybe_cached_value if maybe_cached_value
+    puts "Calculating..."
+    result = Crtdefendant.pluck(attribute_key).
+      tally.
+      sort_by {|_,v| v}.
+      reverse.
+      first(limit)
+    @cache[cache_key(attribute_key, first)] = result
+    result
+  end
+
+  def case_names_for_top(attribute_key, first: nil)
+    tally_by(attribute_key, first: first).
+      map do |k, v|
+        Crdmain.find_by(matter_no: k)&.case_name || "Missing case with #{v} defendants"
+      end
+  end
+
+
+  @cache = {}
+
+  def try_cache(key, first)
+    @cache.fetch(cache_key(key, first)) { false }
+  end
+
+  def cache_key(*args)
+    args.join("-")
+  end
+
+  # Thanks to https://asktom.oracle.com/pls/apex/asktom.search?tag=how-to-calculate-current-db-size
+  def db_size
+    physical = db.exec_query "select sum(bytes)/1024/1024 size_in_mb from dba_data_files"
+    allocated = db.exec_query "select sum(bytes)/1024/1024 size_in_mb from dba_segments"
+    puts <<~MSG
+
+      Allocated space: #{allocated.rows.first.first / 1024} GB (max: 12 GB)
+      Physical space: #{physical.rows.first.first / 1024} GB
+
+    MSG
+  end
+
+
 end
