@@ -26,6 +26,7 @@
 
 # Ignore data files
 db/data
+db/migrate/support
 
 # Ignore the schema now that the initial schema has been committed
 db/schema.rb

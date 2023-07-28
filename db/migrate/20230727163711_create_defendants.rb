@@ -15,6 +15,7 @@ class CreateDefendants < ActiveRecord::Migration[7.0]
 
       create_table :organizations, force: :cascade do |t|
         t.string :name
+        t.string :defendant_affiliation_name
 
         t.timestamps
       end
