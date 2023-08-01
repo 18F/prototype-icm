@@ -2,9 +2,12 @@ module ApplicationHelper
 
   RAILS_TABLES = %w(
     schema_migrations
+    assignments
     defendants
     organizations
     defendants_organizations
+    sentences
+    sentence_components
   )
 
   def db
@@ -104,12 +107,12 @@ module ApplicationHelper
 
   # Thanks to https://asktom.oracle.com/pls/apex/asktom.search?tag=how-to-calculate-current-db-size
   def db_size
-    physical = db.exec_query "select sum(bytes)/1024/1024 size_in_mb from dba_data_files"
-    allocated = db.exec_query "select sum(bytes)/1024/1024 size_in_mb from dba_segments"
+    physical = db.exec_query("select sum(bytes)/1024/1024 size_in_mb from dba_data_files").rows.first.first
+    allocated = db.exec_query("select sum(bytes)/1024/1024 size_in_mb from dba_segments").rows.first.first
     puts <<~MSG
 
-      Allocated space: #{allocated.rows.first.first / 1024} GB (max: 12 GB)
-      Physical space: #{physical.rows.first.first / 1024} GB
+      Allocated space: #{(allocated / 1024).round(2)} GB (max: 12 GB)
+      Physical space: #{(physical / 1024).round(2)} GB
 
     MSG
   end
