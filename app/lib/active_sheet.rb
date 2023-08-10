@@ -21,6 +21,12 @@ class ActiveSheet
       end
 
       def find_by(options={})
+        find_by!(options)
+      rescue RecordNotFound => e
+        nil
+      end
+
+      def find_by!(options={})
         raise "Must only give 1 option to #find_by" unless options.size == 1
         key, value = options.to_a.first.map(&:to_s)
         raise "Must give a key in the header: #{source.headers} but gave #{key.inspect}" unless source.headers.include?(key)

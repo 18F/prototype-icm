@@ -8,9 +8,12 @@ gem "rails", "~> 7.0.5"
 
 gem "sprockets-rails" # Asset pipeline
 
-# Oracle database and client
+# Oracle database and client for legacy database
 gem "activerecord-oracle_enhanced-adapter", "~> 7.0.0"
 gem "ruby-oci8"
+
+# Postgres for modern database
+gem "pg", "~> 1.1"
 
 gem "mustache" # Templates
 

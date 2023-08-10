@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+
+  oracledb:
+    image: container-registry.oracle.com/database/express:21.3.0-xe
+    volumes:
+      - ./db/data:/db/data
+      - icm_oracle:/opt/oracle/data
+    ports:
+      - 1521:1521
+    environment:
+      - ORACLE_PWD=password
+    restart: always
+
+  postgres:
+    image: postgres:14.8
+    volumes:
+      - ./db/data:/db/data
+      - icm_postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=password
+    restart: always
+
+volumes:
+  icm_oracle:
+  icm_postgres:

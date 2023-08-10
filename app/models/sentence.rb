@@ -1,4 +1,4 @@
-class Sentence < ApplicationRecord
+class Sentence < ModernRecord
   belongs_to :defendant
   # belongs_to :matter, class_name: "Crdmain", primary_key: :matter_no
   has_many :components, class_name: "SentenceComponent"

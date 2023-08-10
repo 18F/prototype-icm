@@ -1,21 +1,19 @@
-default: &default
-  adapter: oracle_enhanced
-  host: localhost
-  port: 1521
-  username: system
-  password: password
-  database: XEPDB1
-  schema: LAWPROD
-  encoding: unicode
-  # For details on connection pooling, see Rails configuration guide
-  # https://guides.rubyonrails.org/configuring.html#database-pooling
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-
 development:
-  <<: *default
-
-# Warning: The database defined as "test" will be erased and
-# re-generated from your development database when you run "rake".
-# Do not set this db to the same as development or production.
-test:
-  <<: *default
+  modern:
+    adapter: postgresql
+    database: prototype_icm
+    encoding: unicode
+    host: 0.0.0.0
+    port: 5432
+    username: postgres
+    password: password
+    migration_paths: db/migrate
+  legacy:
+    adapter: oracle_enhanced
+    database: XEPDB1
+    encoding: unicode
+    port: 1521
+    schema: LAWPROD
+    username: system
+    password: password
+    migration_paths: db/legacy_migrate

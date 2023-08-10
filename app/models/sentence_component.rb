@@ -1,4 +1,4 @@
-class SentenceComponent < ApplicationRecord
+class SentenceComponent < ModernRecord
   self.inheritance_column = false
 
   belongs_to :sentence
@@ -42,6 +42,19 @@ class SentenceComponent < ApplicationRecord
 
   def calculate_duration
     self.duration = self.duration_quantity.send(self.duration_unit).to_i
+  end
+
+  def duration
+    ActiveSupport::Duration.build(read_attribute :duration)
+  end
+
+  def humanize_duration
+    case type
+    when "community_service"
+      {:hours => duration_quantity}
+    else
+      duration.parts
+    end
   end
 
 end

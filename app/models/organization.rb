@@ -1,6 +1,6 @@
 require 'csv'
 
-class Organization < ApplicationRecord
+class Organization < ModernRecord
   has_and_belongs_to_many :defendants
 
   WARN_WORDS = CSV.read('app/lib/acronyms.csv', headers: true).map { |row| row["acronym"] }
@@ -11,12 +11,9 @@ class Organization < ApplicationRecord
     overlap = (record.name.upcase.split(" ") & WARN_WORDS)
     if overlap.any?
       warn <<~MESSAGE
-        This record is named:
-          #{record.name}
-
-        When naming an organization, we recommend against using these words / abbreviations:
+        This record is named: "#{record.name}"
+        When naming an organization, we recommend avoiding terms:
           #{overlap.join(", ")}
-
         Instead, please use the full term.
       MESSAGE
     end
