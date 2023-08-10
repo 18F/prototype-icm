@@ -27,6 +27,5 @@ class CreateDefendants < ActiveRecord::Migration[7.0]
     end
     add_index :defendants_organizations, :defendant_id
     add_index :defendants_organizations, :organization_id
-
   end
 end

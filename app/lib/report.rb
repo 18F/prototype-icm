@@ -1,8 +1,8 @@
 require "forwardable"
 
 # Overwrites Mustache's open and close tags
-require_relative "./ext/mustache.rb"
-require_relative "./errors.rb"
+require_relative "./ext/mustache"
+require_relative "./errors"
 
 # This class makes looking up and running reports more convenient.
 # Report.all gets a list of reports, based on the contents of app/queries
@@ -165,7 +165,7 @@ class Report
     Dir[File.expand_path("app/queries/*")].each.with_index do |path, i|
       base, _, _ext = File.basename(path).partition(".")
       query = File.read(path)
-      Report.new(id: i+1, name: base, query: query)
+      Report.new(id: i + 1, name: base, query: query)
     end
   end
 

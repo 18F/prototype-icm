@@ -3,7 +3,7 @@ class SentenceComponent < ModernRecord
 
   belongs_to :sentence
 
-  enum :type, %i(
+  enum :type, %i[
     alternative
     community_service
     confinement
@@ -12,12 +12,12 @@ class SentenceComponent < ModernRecord
     prison
     probation
     restitution
-  )
+  ]
 
   # If a sentence is 2 years:
   #   the duration quantity is 2
   #   the duration unit is "years"
-  enum :duration_unit, %i( years months weeks days hours minutes )
+  enum :duration_unit, %i[years months weeks days hours minutes]
 
   # Before running validations, turn the duration into an integer
   #   so we can compare and sort by duration amounts.
@@ -41,20 +41,19 @@ class SentenceComponent < ModernRecord
   end
 
   def calculate_duration
-    self.duration = self.duration_quantity.send(self.duration_unit).to_i
+    self.duration = duration_quantity.send(duration_unit).to_i
   end
 
   def duration
-    ActiveSupport::Duration.build(read_attribute :duration)
+    ActiveSupport::Duration.build(read_attribute(:duration))
   end
 
   def humanize_duration
     case type
     when "community_service"
-      {:hours => duration_quantity}
+      {hours: duration_quantity}
     else
       duration.parts
     end
   end
-
 end

@@ -1,18 +1,18 @@
 module DataTransform
   module Common
     def skip_defendant(original)
-      original.def_name.nil?       ||
-      original.first_name.nil?     ||
-      original.first_name == "FNU" ||
-      original.last_name.nil?      ||
-      original.last_name == "LNU"  ||
-      original.def_name.match?(/UNKNOWN/)
+      original.def_name.nil? ||
+        original.first_name.nil? ||
+        original.first_name == "FNU" ||
+        original.last_name.nil? ||
+        original.last_name == "LNU" ||
+        original.def_name.match?(/UNKNOWN/)
     end
 
     def find_or_create_defendant(original)
       candidate = ::Defendant.find_or_create_by!(
         first_name: original.first_name,
-        last_name: original.last_name,
+        last_name: original.last_name
       )
       assert_same_attr(:juvenile, candidate, original)
       assert_same_attr(:title, candidate, original)
@@ -21,7 +21,7 @@ module DataTransform
         title: original.title,
         juvenile: original.juvenile,
         alias: original.alias,
-        alias_no: original.alias_no,
+        alias_no: original.alias_no
       )
       candidate.save!
       candidate
@@ -36,8 +36,7 @@ module DataTransform
       organization.defendants << defendant
     end
 
-
-    OrgName = ActiveSheet.use('db/migrate/support/organizations.csv')
+    OrgName = ActiveSheet.use("db/migrate/support/organizations.csv")
 
     def canonical_org_name(original_name)
       new_name = OrgName.find_by("Original" => original_name).fetch("Reassigned") { nil }
@@ -67,6 +66,5 @@ module DataTransform
         MESSAGE
       end
     end
-
   end
 end

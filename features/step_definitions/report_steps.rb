@@ -1,6 +1,6 @@
 DOJ_FOUNDING = 1870
 CURRENT_YEAR = Date.today.year
-TYPES = %w(reference string int)
+TYPES = %w[reference string int]
 
 Given("report {string}") do |report_name|
   store :report, report_name
@@ -179,7 +179,6 @@ def assert_number(*args)
   end
 end
 
-
 def fail_query_evaluation_error(error_object)
   nil_vars = error_object.variables.select { |k, v| k if v.nil? }
   examples = nil_vars.map.with_index do |pair, i|
@@ -191,7 +190,7 @@ def fail_query_evaluation_error(error_object)
     The report "#{error_object.report_name}" doesn't have all the variables
     it needs in order to run.
 
-    Please define values for #{nil_vars.keys.map {|v| "`#{v}`"}.join(", ")} by adding them to the test,
+    Please define values for #{nil_vars.keys.map { |v| "`#{v}`" }.join(", ")} by adding them to the test,
     in the "Given" section after the report, like:
 
         #{examples}

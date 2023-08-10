@@ -4,7 +4,6 @@ Rake::Task["db:test:purge"].clear
 Rake::Task["db:schema:dump"].clear
 Rake::Task["db:schema:load"].clear
 
-
 namespace :db do
   namespace :test do
     task :load do |t|
@@ -26,7 +25,6 @@ namespace :db do
     end
   end
 end
-
 
 def log_warning(task_name)
   warn <<~MESSAGE

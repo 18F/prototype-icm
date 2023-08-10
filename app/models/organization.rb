@@ -1,9 +1,9 @@
-require 'csv'
+require "csv"
 
 class Organization < ModernRecord
   has_and_belongs_to_many :defendants
 
-  WARN_WORDS = CSV.read('app/lib/acronyms.csv', headers: true).map { |row| row["acronym"] }
+  WARN_WORDS = CSV.read("app/lib/acronyms.csv", headers: true).map { |row| row["acronym"] }
 
   before_create do |record|
     # TODO Refactor into a named business rule

@@ -1,6 +1,5 @@
 module DataTransform
   class Base
-
     include Test::Unit::Assertions
     include ApplicationHelper
     include DataTransform::Common

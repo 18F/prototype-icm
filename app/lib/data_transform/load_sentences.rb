@@ -1,7 +1,6 @@
 module DataTransform
   class LoadSentences < DataTransform::Base
-
-    DEATH_PENALTY_CODES = %w( P X )
+    DEATH_PENALTY_CODES = %w[P X]
     LIFE_SENTENCE = "L"
     TIME_SERVED = "T"
     UNITS = {
@@ -9,7 +8,7 @@ module DataTransform
       "D" => "days",
       "W" => "weeks",
       "M" => "months",
-      "Y" => "years",
+      "Y" => "years"
     }
 
     def perform
@@ -45,55 +44,55 @@ module DataTransform
     end
 
     def build_alternative(record)
-      return nil # There's no implementation of this yet
-      { type: :alternative }
+      nil # There's no implementation of this yet
+      # {type: :alternative}
     end
 
     def build_community_service(record)
       return nil unless all_present?(record, :comm_serv_hrs)
-      { type: :community_service, duration_quantity: record.comm_serv_hrs, duration_unit: :hours }
+      {type: :community_service, duration_quantity: record.comm_serv_hrs, duration_unit: :hours}
     end
 
     def build_confinement(record)
       return nil unless all_present?(record, :confinement, :confine_unit)
-      { type: :confinement, duration_quantity: record.confinement.to_i, duration_unit: UNITS.fetch(record.confine_unit) }
+      {type: :confinement, duration_quantity: record.confinement.to_i, duration_unit: UNITS.fetch(record.confine_unit)}
     end
 
     def build_death_penalty(record)
       return nil unless DEATH_PENALTY_CODES.include?(record.prison_unit)
-      { type: :death_penalty }
+      {type: :death_penalty}
     end
 
     def build_fine(record)
       return nil unless all_present?(record, :fine)
-      { type: :fine, amount: record.fine }
+      {type: :fine, amount: record.fine}
     end
 
     def build_prison(record)
       return nil unless all_present?(record, :prison_sent, :prison_unit)
       return nil if DEATH_PENALTY_CODES.include?(record.prison_unit)
       case record.prison_unit
-      when %w( Y M W D H )
+      when %w[Y M W D H]
         {
           type: :prison,
           duration_quantity: record.prison_sent.to_i,
           duration_unit: UNITS.fetch(record.prison_unit)
         }
       when LIFE_SENTENCE
-        { type: :prison, life_in_prison: true }
+        {type: :prison, life_in_prison: true}
       when TIME_SERVED
-        { type: :prison, time_served: true }
+        {type: :prison, time_served: true}
       end
     end
 
     def build_probation(record)
       return nil unless all_present?(record, :probation, :probation_unit)
-      { type: :probation, duration_quantity: record.probation, duration_unit: UNITS.fetch(record.probation_unit) }
+      {type: :probation, duration_quantity: record.probation, duration_unit: UNITS.fetch(record.probation_unit)}
     end
 
     def build_restitution(record)
       return nil unless all_present?(record, :restitution)
-      { type: :restitution, amount: record.restitution }
+      {type: :restitution, amount: record.restitution}
     end
 
     def all_present?(record, *attributes)

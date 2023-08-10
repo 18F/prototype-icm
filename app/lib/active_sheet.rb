@@ -1,32 +1,25 @@
-require 'csv'
+require "csv"
 
 class ActiveSheet
-
   class Base
-
     class << self
-
       @sheet = nil
 
-      def sheet=(path)
-        @sheet = path
-      end
+      attr_writer :sheet
 
-      def sheet
-        @sheet
-      end
+      attr_reader :sheet
 
       def column_names
         source.headers
       end
 
-      def find_by(options={})
+      def find_by(options = {})
         find_by!(options)
-      rescue RecordNotFound => e
+      rescue RecordNotFound
         nil
       end
 
-      def find_by!(options={})
+      def find_by!(options = {})
         raise "Must only give 1 option to #find_by" unless options.size == 1
         key, value = options.to_a.first.map(&:to_s)
         raise "Must give a key in the header: #{source.headers} but gave #{key.inspect}" unless source.headers.include?(key)
@@ -36,13 +29,10 @@ class ActiveSheet
       end
 
       def source
-        raise "No sheet given for model #{self.name}" if @sheet.nil?
-        @file ||= CSV.read(self.sheet, headers: true)
+        raise "No sheet given for model #{name}" if @sheet.nil?
+        @file ||= CSV.read(sheet, headers: true)
       end
-
     end
-
-
   end
 
   def self.use(path)

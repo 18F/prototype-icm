@@ -3,7 +3,7 @@
 # This way, we don't have to change the SQL queries from DOJ when we
 # add them into this app.
 
-require 'mustache' # SMELL: This is likely unnecessary.
+require "mustache" # SMELL: This is likely unnecessary.
 
 class Mustache::Parser
   def initialize(options = {})
@@ -15,7 +15,7 @@ class Mustache::Parser
     end
 
     # Initialize default tags
-    self.otag ||= '{?' # Changed: Mustache defines these as '{{' and '}}'
-    self.ctag ||= '}'
+    self.otag ||= "{?" # Changed: Mustache defines these as '{{' and '}}'
+    self.ctag ||= "}"
   end
 end
