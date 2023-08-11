@@ -8,8 +8,6 @@ class CreateDefendants < ActiveRecord::Migration[7.0]
       t.boolean :juvenile
       t.boolean :alias
       t.integer :alias_no
-      # t.matter_no :integer
-      # t.def_id :integer
 
       t.timestamps
     end

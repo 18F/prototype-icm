@@ -8,19 +8,25 @@ module DataTransform
     #   1. Runs #before, which should raise an error when expected conditions are unmet
     #   2. Runs #perform, which does the data transformation work
     #   3. Runs #test_cases, which should be test/unit assertions
-    # Suggestion: Wrap calls to .transform in a database transaction, so they'll rollback on error
-    # Set rollback_on_error: true to do a database transaction rollback
+    # Set raise_on_error: true to raise, which will rollback the transaction
     #   if the tests fail their assertions. Otherwise you'll just get a warning message.
-    def self.perform(rollback_on_error: false)
+    # Set in_transaction: false if you don't want it to run in a transaction
+    def self.perform(raise_on_error: false, in_transaction: true)
       instance = new
       instance.before
       instance.perform
       begin
         instance.test_cases
       rescue Test::Unit::AssertionFailedError => e
-        raise e if rollback_on_error
-        warn "[DataTransform] Continuing despite the following error:"
+        raise e if raise_on_error
+        warn "[#{name}] Continuing despite the following error:"
         warn e.message
+      end
+    end
+
+    private_class_method def self._perform(raise_on_error: false, in_transaction: true)
+      ModernRecord.transaction do
+        perform(raise_on_error: raise_on_error, in_transaction: in_transaction)
       end
     end
 

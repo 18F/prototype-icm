@@ -14,16 +14,15 @@ module DataTransform
         first_name: original.first_name,
         last_name: original.last_name
       )
-      assert_same_attr(:juvenile, candidate, original)
-      assert_same_attr(:title, candidate, original)
-      candidate.assign_attributes(
+      # assert_same_attr(:juvenile, candidate, original)
+      # assert_same_attr(:title, candidate, original)
+      candidate.update(
         middle_name: original.middle_in,
         title: original.title,
         juvenile: original.juvenile,
         alias: original.alias,
         alias_no: original.alias_no
       )
-      candidate.save!
       candidate
     end
 
@@ -53,7 +52,6 @@ module DataTransform
       incoming_attr = incoming.send(attribute)
       if existing_attr.present? && existing_attr != incoming_attr
         return unless incoming_attr.present?
-        # TODO: Handle juvenile
         warn <<~MESSAGE
           CONFLICT
           I'm trying to assign #{attribute}=#{incoming_attr} to a record

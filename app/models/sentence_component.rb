@@ -37,7 +37,7 @@ class SentenceComponent < ModernRecord
   end
 
   def conditions_override_duration?
-    life_in_prison? || time_served?
+    life? || time_served?
   end
 
   def calculate_duration
@@ -48,11 +48,13 @@ class SentenceComponent < ModernRecord
     ActiveSupport::Duration.build(read_attribute(:duration))
   end
 
-  def humanize_duration
+  def humanize_duration(life_default: 255.years, time_served_default: 0)
     case type
     when "community_service"
       {hours: duration_quantity}
     else
+      life_default if life?
+      time_served_default if time_served?
       duration.parts
     end
   end
