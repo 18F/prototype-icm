@@ -1,14 +1,17 @@
+defaults_postgres: &default_postgres
+  adapter: postgresql
+  username: postgres
+  password: password
+  encoding: unicode
+  host: 0.0.0.0
+  port: 5432
+
 development:
   modern:
-    adapter: postgresql
+    <<: *default_postgres
     database: prototype_icm
-    encoding: unicode
-    host: 0.0.0.0
-    port: 5432
-    username: postgres
-    password: password
     migration_paths: db/migrate
-  legacy:
+  legacy: &legacy
     adapter: oracle_enhanced
     database: XEPDB1
     encoding: unicode
@@ -17,3 +20,10 @@ development:
     username: system
     password: password
     migration_paths: db/legacy_migrate
+
+test:
+  modern:
+    <<: *default_postgres
+    database: prototype_icm_test
+  legacy:
+    <<: *legacy
