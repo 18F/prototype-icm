@@ -171,8 +171,10 @@ GEM
       timeout
     net-smtp (0.3.3)
       net-protocol
-    nio4r (2.5.9)
+    nio4r (2.7.0)
     nokogiri (1.15.2-x86_64-darwin)
+      racc (~> 1.4)
+    nokogiri (1.15.2-x86_64-linux)
       racc (~> 1.4)
     parallel (1.23.0)
     parser (3.2.2.3)
@@ -181,7 +183,7 @@ GEM
     pg (1.5.3)
     power_assert (2.0.3)
     public_suffix (5.0.1)
-    puma (5.6.6)
+    puma (5.6.8)
       nio4r (~> 2.0)
     racc (1.7.1)
     rack (2.2.7)
@@ -280,6 +282,7 @@ GEM
 
 PLATFORMS
   x86_64-darwin-20
+  x86_64-linux
 
 DEPENDENCIES
   activerecord-oracle_enhanced-adapter (~> 7.0.0)
@@ -289,7 +292,7 @@ DEPENDENCIES
   debug
   mustache
   pg (~> 1.1)
-  puma (~> 5.0)
+  puma (~> 5.6)
   rails (~> 7.0.5)
   ruby-oci8
   sprockets-rails
